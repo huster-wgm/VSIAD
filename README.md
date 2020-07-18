@@ -5,7 +5,7 @@ This repository contains the code and dataset for the paper ["Learn to Recover V
 
 ## Requirements
 
-The source code have been valified on:
+The source code have been valified on the following env:
 
 - NVIDIA GPU > 8GB
 - Ubuntu 16.04 LTS
