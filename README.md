@@ -15,7 +15,9 @@ The source code have been valified on:
 
 ## VSIAD Dataset
 
+```
 pending
+```
 
 ## Pretrained model
 
@@ -24,18 +26,17 @@ SSN-IN
 
 
 ## Usage
+
+```
 pending
+```
 
 ## Publication
 G. Wu, Y. Zheng, Z. Guo, et al., &quot;Learn to Recover Visible Color for Video Surveillance in a Day,&quot; <i>European Conference on Computer Vision (**ECCV**)</i>, to appear, 2020. (<font color="blue">oral presentation, acceptance rate: 2%</font>)  
 
 
 ## Citation
-Please cite the following paper if you feel this repository useful.
-```
-pending
 
-```
 
 ## Contact
 For any question, please contact
