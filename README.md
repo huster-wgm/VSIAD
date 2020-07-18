@@ -15,8 +15,7 @@ The source code have been valified on:
 
 ## VSIAD Dataset
 
-SSN-GN()
-SSN-IN
+pending
 
 ## Pretrained model
 
@@ -25,9 +24,7 @@ SSN-IN
 
 
 ## Usage
-
-SSN-GN()
-SSN-IN
+pending
 
 ## Publication
 G. Wu, Y. Zheng, Z. Guo, et al., &quot;Learn to Recover Visible Color for Video Surveillance in a Day,&quot; <i>European Conference on Computer Vision (**ECCV**)</i>, to appear, 2020. (<font color="blue">oral presentation, acceptance rate: 2%</font>)  
