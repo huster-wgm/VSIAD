@@ -37,6 +37,9 @@ G. Wu, Y. Zheng, Z. Guo, et al., &quot;Learn to Recover Visible Color for Video 
 
 ## Citation
 
+```
+pending
+```
 
 ## Contact
 For any question, please contact
