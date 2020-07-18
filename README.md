@@ -20,10 +20,15 @@ pending
 ```
 
 ## Pretrained model
-
-SSN-GN()
-SSN-IN
-
+```
+checkppoint/
+--res18ynet-VC24-RGB2LAB_iter_100000.pth                 => (SSN, SSM => 0)
+--res18ynetsync-VC24-L2LAB_iter_100000.pth               => (SSN, L2LAB)
+--res18ynetsync-VC24-RGB2LAB_iter_100000.pth             => (SSN, full model)
+--res18ynetsync-VC24-RGB2LAB-nop_iter_100000.pth.pth     => (SSN, full model)
+--res18ynetsync-VC24-LAB2LAB_iter_100000.pth             => (SSN, LAB2LAB)
+--res18ynetsyncGN-VC24-RGB2LAB_iter_100000.pth           => (SSN, IN2GN)
+```
 
 ## Usage
 
