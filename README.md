@@ -16,7 +16,8 @@ The source code have been valified on the following env:
 ## VSIAD Dataset
 
 ```
-pending
+Link => https://husterwgm.com/index.php/s/3zXdybHcnBYo48D
+passwd => a9BHNxgN
 ```
 
 ## Pretrained model
