@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+
 def conv3x3(in_planes, out_planes, stride=1):
     """3x3 convolution with padding"""
     return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride,
@@ -40,6 +41,7 @@ def get_deconv_params(ratio="x2"):
     output_padding = (stride-kernel_size)
     return kernel_size, stride, output_padding
 
+
 def depthwiseDeconv(in_planes, out_planes, ratio="x2", depthwise=True):
     """depthwise deconv"""
     kernel_size, stride, output_padding = get_deconv_params(ratio)
@@ -65,8 +67,6 @@ def deconv(in_planes, out_planes, ratio="x2"):
                               groups=1)
 
 
-
-
 def deconv3d(in_planes, out_planes, ratio="x2"):
     """3d deconv"""
     kernel_size, stride, opad = get_deconv_params(ratio)
@@ -79,8 +79,18 @@ def deconv3d(in_planes, out_planes, ratio="x2"):
                               output_padding=opad,
                               groups=1)
 
+
+def conv3x3bn(in_ch, out_ch, stride=1):
+    "3x3 convolution with padding"
+    convbn = nn.Sequential(
+        nn.Conv2d(in_ch, out_ch, kernel_size=3,
+                  stride=stride, padding=1, bias=False),
+        nn.BatchNorm2d(out_ch),)
+    return convbn
+
+
 class Interp(nn.Module):
-    def __init__(self, scale_factor=2, mode='nearest', align_corners=None, utype='3D'):
+    def __init__(self, scale_factor=2, mode='nearest', align_corners=None, utype='2D'):
         super(Interp, self).__init__()
         self.up = F.interpolate
         self.mode = mode
@@ -139,6 +149,158 @@ class BasicBlockNB(nn.Module):
         out = self.relu(out)
 
         return out
+
+
+class ConvBlock(nn.Module):
+    def __init__(self, in_ch, out_ch, is_bn=False, is_leaky=False, alpha=0.1):
+        super(ConvBlock, self).__init__()
+        # convolution block
+        if is_bn:
+            self.block = nn.Sequential(
+                nn.Conv2d(in_ch, out_ch, 3, padding=1),
+                nn.LeakyReLU(alpha) if is_leaky else nn.ReLU(True),
+                nn.BatchNorm2d(out_ch),)
+        else:
+            self.block = nn.Sequential(
+                nn.Conv2d(in_ch, out_ch, 3, padding=1),
+                nn.LeakyReLU(alpha) if is_leaky else nn.ReLU(True),)
+
+    def forward(self, x):
+        x = self.block(x)
+        return x
+
+
+class UNetDownx2(nn.Module):
+    def __init__(self, in_ch, out_ch, is_bn=False, is_leaky=False, alpha=0.1):
+        super(UNetDownx2, self).__init__()
+        # convolution block
+        if is_bn:
+            self.block = nn.Sequential(
+                nn.Conv2d(in_ch, out_ch, 3, padding=1),
+                nn.LeakyReLU(alpha) if is_leaky else nn.ReLU(True),
+                nn.BatchNorm2d(out_ch),
+                nn.Conv2d(out_ch, out_ch, 3, padding=1),
+                nn.LeakyReLU(alpha) if is_leaky else nn.ReLU(True),
+                nn.BatchNorm2d(out_ch),)
+        else:
+            self.block = nn.Sequential(
+                nn.Conv2d(in_ch, out_ch, 3, padding=1),
+                nn.LeakyReLU(alpha) if is_leaky else nn.ReLU(True),
+                nn.Conv2d(out_ch, out_ch, 3, padding=1),
+                nn.LeakyReLU(alpha) if is_leaky else nn.ReLU(True),)
+
+    def forward(self, x):
+        x = self.block(x)
+        return x
+
+
+class UNetDownx3(nn.Module):
+    def __init__(self, in_ch, out_ch, is_bn=False, is_leaky=False, alpha=0.1):
+        super(UNetDownx3, self).__init__()
+        # convolution block
+        if is_bn:
+            self.block = nn.Sequential(
+                nn.Conv2d(in_ch, out_ch, 3, padding=1),
+                nn.LeakyReLU(alpha) if is_leaky else nn.ReLU(True),
+                nn.BatchNorm2d(out_ch),
+                nn.Conv2d(out_ch, out_ch, 3, padding=1),
+                nn.LeakyReLU(alpha) if is_leaky else nn.ReLU(True),
+                nn.BatchNorm2d(out_ch),
+                nn.Conv2d(out_ch, out_ch, 3, padding=1),
+                nn.LeakyReLU(alpha) if is_leaky else nn.ReLU(True),
+                nn.BatchNorm2d(out_ch),)
+        else:
+            self.block = nn.Sequential(
+                nn.Conv2d(in_ch, out_ch, 3, padding=1),
+                nn.LeakyReLU(alpha) if is_leaky else nn.ReLU(True),
+                nn.Conv2d(out_ch, out_ch, 3, padding=1),
+                nn.LeakyReLU(alpha) if is_leaky else nn.ReLU(True),
+                nn.Conv2d(out_ch, out_ch, 3, padding=1),
+                nn.LeakyReLU(alpha) if is_leaky else nn.ReLU(True),)
+
+    def forward(self, x):
+        x = self.block(x)
+        return x
+
+
+class UNetUpx2(nn.Module):
+    def __init__(self, in_ch, out_ch, is_deconv=False, is_bn=False, is_leaky=False, alpha=0.1):
+        super(UNetUpx2, self).__init__()
+        # upsampling and convolution block
+        if is_deconv:
+            self.upscale = nn.ConvTranspose2d(in_ch, out_ch, 2, stride=2)
+        else:
+            if is_bn:
+                self.upscale = nn.Sequential(
+                    nn.Conv2d(in_ch, out_ch, 1, stride=1),
+                    nn.LeakyReLU(alpha) if is_leaky else nn.ReLU(True),
+                    nn.BatchNorm2d(out_ch),
+                    Interp(scale_factor=2),)
+            else:
+                self.upscale = nn.Sequential(
+                    nn.Conv2d(in_ch, out_ch, 1, stride=1),
+                    nn.LeakyReLU(alpha) if is_leaky else nn.ReLU(True),
+                    Interp(scale_factor=2),)
+        self.block = UNetDownx2(in_ch, out_ch, is_bn, is_leaky, alpha)
+
+    def forward(self, x1, x2):
+        x1 = self.upscale(x1)
+        x = torch.cat([x1, x2], dim=1)
+        x = self.block(x)
+        return x
+
+
+class UNetUpx3(nn.Module):
+    def __init__(self, in_ch, out_ch, is_deconv=False, is_bn=False, is_leaky=False, alpha=0.1):
+        super(UNetUpx3, self).__init__()
+        # upsampling and convolution block
+        if is_deconv:
+            self.upscale = nn.ConvTranspose2d(in_ch, out_ch, 2, stride=2)
+        else:
+            if is_bn:
+                self.upscale = nn.Sequential(
+                    nn.Conv2d(in_ch, out_ch, 1, stride=1),
+                    nn.LeakyReLU(alpha) if is_leaky else nn.ReLU(True),
+                    nn.BatchNorm2d(out_ch),
+                    Interp(scale_factor=2),)
+            else:
+                self.upscale = nn.Sequential(
+                    nn.Conv2d(in_ch, out_ch, 1, stride=1),
+                    nn.LeakyReLU(alpha) if is_leaky else nn.ReLU(True),
+                    Interp(scale_factor=2),)
+        self.block = UNetDownx3(in_ch, out_ch, is_bn, is_leaky, alpha)
+
+    def forward(self, x1, x2):
+        x1 = self.upscale(x1)
+        x = torch.cat([x1, x2], dim=1)
+        x = self.block(x)
+        return x
+
+
+class SegNetUpx2(nn.Module):
+    def __init__(self, in_ch, out_ch, is_bn=False):
+        super(SegNetUpx2, self).__init__()
+        # upsampling and convolution block
+        self.unpool = nn.MaxUnpool2d(2, 2)
+        self.block = UNetDownx2(in_ch, out_ch, is_bn)
+
+    def forward(self, x, indices, output_shape):
+        x = self.unpool(x, indices, output_shape)
+        x = self.block(x)
+        return x
+
+
+class SegNetUpx3(nn.Module):
+    def __init__(self, in_ch, out_ch, is_bn=False):
+        super(SegNetUpx3, self).__init__()
+        # upsampling and convolution block
+        self.unpool = nn.MaxUnpool2d(2, 2)
+        self.block = UNetDownx3(in_ch, out_ch, is_bn)
+
+    def forward(self, x, indices, output_shape):
+        x = self.unpool(x, indices, output_shape)
+        x = self.block(x)
+        return x
 
 
 class BasicBlock(nn.Module):

@@ -8,15 +8,16 @@
 import os
 import re
 import torch
-from models.berg import *
+from models.fcn import fcn8s, fcn16s, fcn32s
+from models.unet import unet
+from models.fpn import fpn
 from models.resnet import res18net, res34net
 from models.resunet import res18unet, res34unet
 from models.resunetnb import res18unetNB, res34unetNB
 from models.resynet import res18ynet, res34ynet
 from models.resynetsync import res18ynetsync, res34ynetsync
 from models.resynetsyncnb import res18ynetsyncNB, res34ynetsyncNB
-from models.resynetsync3D import res18ynetsync3D, res34ynetsync3D
-from models.resynetsyncnb3D import res18ynetsyncNB3D, res34ynetsyncNB3D
+
 
 DIR = os.path.dirname(os.path.abspath(__file__))
 Checkpoint_DIR = os.path.join(DIR, '../checkpoint')

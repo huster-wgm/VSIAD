@@ -1,9 +1,17 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+  @Email:  guangmingwu2010@gmail.com
+  @Copyright: go-hiroaki
+  @License: MIT
+"""
 import argparse
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.utils.model_zoo as model_zoo
 from .block import *
+
 
 __all__ = ['ResNet', 'resnet18', 'resnet34', 'resnet50', 'resnet101',
            'resnet152']
@@ -18,12 +26,13 @@ model_urls = {
 }
 
 
-
 class ResNet(nn.Module):
 
     def __init__(self, block, layers, src_ch=1, tar_ch=3, instance=False):
         super(ResNet, self).__init__()
         self.src_ch = src_ch
+        if isinstance(tar_ch, list):
+            tar_ch = sum(tar_ch)
         self.inplanes = 64
         self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3,
                                bias=False)
@@ -179,14 +188,10 @@ if __name__ == "__main__":
                         help='nb channel of source')
     parser.add_argument('-tar_ch', type=int, default=3,
                         help='nb channel of target')
-    parser.add_argument('-base_kernel', type=int, default=12,
-                        help='batch_size for training ')
-    parser.add_argument('-lr', type=float, default=1e-4,
-                        help='learning rate for discriminator')
     args = parser.parse_args()
 
     x = torch.FloatTensor(
-        np.random.random((args.base_kernel, args.src_ch, args.img_row, args.img_col)))
+        np.random.random((1, args.src_ch, args.img_row, args.img_col)))
 
     for inst in [True, False]:
         generator = res18net(args.src_ch, args.tar_ch, True, inst)
