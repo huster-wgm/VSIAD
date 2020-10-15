@@ -50,7 +50,7 @@ pending
 ## Contact
 For any question, please contact
 ```
-huster-wgm(.at.)csis.u-tokyo.ac.jp
+huster-wgm(.at.)csis.u-tokyo.ac.jp or
 guangmingwu2010(.at.)gmail.com
 ```
 
