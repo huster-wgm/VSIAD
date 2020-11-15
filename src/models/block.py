@@ -306,7 +306,7 @@ class SegNetUpx3(nn.Module):
 class BasicBlock(nn.Module):
     expansion = 1
 
-    def __init__(self, inplanes, planes, stride=1, downsample=None, BNmode='GN'):
+    def __init__(self, inplanes, planes, stride=1, downsample=None, BNmode='BN'):
         super(BasicBlock, self).__init__()
         self.conv1 = conv3x3(inplanes, planes, stride)
         if BNmode == 'BN':

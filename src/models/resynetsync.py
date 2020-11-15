@@ -23,7 +23,7 @@ model_urls = {
 
 class ResYNetSync(nn.Module):
 
-    def __init__(self, block, layers, src_ch=1, tar_ch=[1, 2], BNmode=None):
+    def __init__(self, block, layers, src_ch, tar_ch, BNmode):
         super(ResYNetSync, self).__init__()
         kernels = [64, 128, 256, 512]
         self.src_ch = src_ch
@@ -31,6 +31,7 @@ class ResYNetSync(nn.Module):
         self.conv1 = nn.Conv2d(3, kernels[0], kernel_size=7, 
                                stride=2, padding=3,
                                bias=False)
+        print("####1 BNmode => ", BNmode)
         if BNmode == 'BN':
             self.bn1 = nn.BatchNorm2d(kernels[0])
         elif BNmode == 'IN':
@@ -78,25 +79,31 @@ class ResYNetSync(nn.Module):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
 
-    def _make_layer(self, block, planes, blocks, stride=1, BNmode=False):
+    def _make_layer(self, block, planes, blocks, stride=1, BNmode='IN'):
         downsample = None
+        print("####2 BNmode => ", BNmode)
         if stride != 1 or self.inplanes != planes * block.expansion:
-            if BNmode == 'BN':
-                bl = nn.BatchNorm2d(planes * block.expansion)
-            elif BNmode == 'IN':
-                bl = nn.InstanceNorm2d(planes * block.expansion)
-            elif BNmode == 'GN':
-                bl = nn.GroupNorm(32, planes * block.expansion)
+            bnl = nn.BatchNorm2d(planes * block.expansion)
+            if BNmode == 'IN':
+                bnl = nn.InstanceNorm2d(planes * block.expansion)
+            if BNmode == 'GN':
+                bnl = nn.GroupNorm(32, planes * block.expansion)
             downsample = nn.Sequential(
                 conv1x1(self.inplanes, planes * block.expansion, stride),
-                bl,
+                bnl,
             )
 
         layers = []
-        layers.append(block(self.inplanes, planes, stride, downsample))
+        if BNmode == 'GN':
+            layers.append(block(self.inplanes, planes, stride, downsample, BNmode=BNmode))
+        else:
+            layers.append(block(self.inplanes, planes, stride, downsample))
         self.inplanes = planes * block.expansion
         for _ in range(1, blocks):
-            layers.append(block(self.inplanes, planes, BNmode=BNmode))
+            if BNmode == 'GN':
+                layers.append(block(self.inplanes, planes, BNmode=BNmode))
+            else:
+                layers.append(block(self.inplanes, planes))
 
         return nn.Sequential(*layers)
 
@@ -182,11 +189,12 @@ class ResYNetSync(nn.Module):
         return x_L, x_R
 
 
-def res18ynetsync(src_ch, tar_ch, pretrained=False, BNmode=None, **kwargs):
+def res18ynetsync(src_ch, tar_ch, pretrained, BNmode, **kwargs):
     """Constructs a ResNet-18 model.
 
     Args:
         pretrained (bool): If True, returns a model pre-trained on ImageNet
+        BNmode (str) in [ BN, IN, GN ]
     """
     model = ResYNetSync(BasicBlock, [2, 2, 2, 2],
                         src_ch, tar_ch, BNmode=BNmode)
@@ -203,17 +211,18 @@ def res18ynetsync(src_ch, tar_ch, pretrained=False, BNmode=None, **kwargs):
     return model
 
 
-def res34ynetsync(src_ch, tar_ch, pretrained=False, BNmode=None, **kwargs):
+def res34ynetsync(src_ch, tar_ch, pretrained, BNmode, **kwargs):
     """Constructs a ResNet-34 model.
 
     Args:
         pretrained (bool): If True, returns a model pre-trained on ImageNet
+        BNmode (str) in [ BN, IN, GN ]
     """
     model = ResYNetSync(BasicBlock, [3, 4, 6, 3],
                         src_ch, tar_ch, BNmode=BNmode)
     if pretrained:
         from collections import OrderedDict
-        pretrained_state = model_zoo.load_url(model_urls['resnet18'])
+        pretrained_state = model_zoo.load_url(model_urls['resnet34'])
         model_state = model.state_dict()
         selected_state = OrderedDict()
         for k, v in pretrained_state.items():

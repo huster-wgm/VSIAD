@@ -41,9 +41,9 @@ def load_checkpoint(checkpoint, src_ch, tar_ch, cuda):
     if "@" in net:
         net = net.split('@')[0]
     if net == "res18ynetsyncGN":
-        net = eval('res18ynetsync')(src_ch, tar_ch, True, 'GN')
+        net = eval('res18ynetsync')(src_ch, tar_ch, False, 'GN')
     else:
-        net = eval(net)(src_ch, tar_ch, True, 'IN')
+        net = eval(net)(src_ch, tar_ch, False, 'IN')
     net.load_state_dict(torch.load(os.path.join(Checkpoint_DIR, checkpoint),
                                    map_location=lambda storage, loc: storage))
     if cuda:
