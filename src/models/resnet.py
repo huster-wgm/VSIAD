@@ -166,7 +166,7 @@ def res34net(src_ch, tar_ch, pretrained=False, instance=True, **kwargs):
                     src_ch, tar_ch, instance=instance)
     if pretrained:
         from collections import OrderedDict
-        pretrained_state = model_zoo.load_url(model_urls['resnet18'])
+        pretrained_state = model_zoo.load_url(model_urls['resnet34'])
         model_state = model.state_dict()
         selected_state = OrderedDict()
         for k, v in pretrained_state.items():
