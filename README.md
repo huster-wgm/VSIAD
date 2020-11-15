@@ -44,7 +44,14 @@ G. Wu, Y. Zheng, Z. Guo, et al., &quot;Learn to Recover Visible Color for Video 
 ## Citation
 
 ```
-pending
+@inproceedings{wu2020learn,
+  title={Learn to Recover Visible Color for Video Surveillance in a Day},
+  author={Wu, Guangming and Zheng, Yinqiang and Guo, Zhiling and Cai, Zekun and Shi, Xiaodan and Ding, Xin and Huang, Yifei and Guo, Yimin and Shibasaki, Ryosuke},
+  booktitle={European Conference on Computer Vision},
+  pages={495--511},
+  year={2020},
+  organization={Springer}
+}
 ```
 
 ## Contact
