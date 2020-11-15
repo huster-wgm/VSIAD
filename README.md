@@ -16,8 +16,8 @@ The source code have been valified on the following env:
 ## VSIAD Dataset
 
 ```
-Link => https://husterwgm.com/index.php/s/3zXdybHcnBYo48D
-passwd => a9BHNxgN
+Link => https://husterwgm.com/index.php/s/Yz8nj3xzCX7wF3R
+passwd => dBgCk7MC
 ```
 
 ## Pretrained model
@@ -44,12 +44,20 @@ G. Wu, Y. Zheng, Z. Guo, et al., &quot;Learn to Recover Visible Color for Video 
 ## Citation
 
 ```
-pending
+@inproceedings{wu2020learn,
+  title={Learn to Recover Visible Color for Video Surveillance in a Day},
+  author={Wu, Guangming and Zheng, Yinqiang and Guo, Zhiling and Cai, Zekun and Shi, Xiaodan and Ding, Xin and Huang, Yifei and Guo, Yimin and Shibasaki, Ryosuke},
+  booktitle={European Conference on Computer Vision},
+  pages={495--511},
+  year={2020},
+  organization={Springer}
+}
 ```
 
 ## Contact
 For any question, please contact
 ```
-huster-wgm(.at.)csis.u-tokyo.ac.jp
+huster-wgm(.at.)csis.u-tokyo.ac.jp or
+guangmingwu2010(.at.)gmail.com
 ```
 

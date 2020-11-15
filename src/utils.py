@@ -27,7 +27,7 @@ def load_model(net, src_ch, tar_ch, cuda):
     if net == "res18ynetsyncGN":
         net = eval('res18ynetsync')(src_ch, tar_ch, True, 'GN')
     else:
-        net = eval(net)(src_ch, tar_ch, True, True)
+        net = eval(net)(src_ch, tar_ch, True, 'IN')
     if cuda:
         net.cuda()
     return net
