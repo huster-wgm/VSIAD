@@ -16,8 +16,8 @@ The source code have been valified on the following env:
 ## VSIAD Dataset
 
 ```
-Link => https://husterwgm.com/index.php/s/Yz8nj3xzCX7wF3R
-passwd => dBgCk7MC
+Link => https://univtokyo-my.sharepoint.com/:u:/g/personal/9291958590_utac_u-tokyo_ac_jp/EZTYb_6LBWhEv1je1gzT8-wB1Dud678ewydOS_wM1YawdA?e=8Y37Kx
+passwd => eccv2020
 ```
 
 ## Pretrained model
