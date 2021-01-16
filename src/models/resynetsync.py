@@ -31,7 +31,7 @@ class ResYNetSync(nn.Module):
         self.conv1 = nn.Conv2d(3, kernels[0], kernel_size=7, 
                                stride=2, padding=3,
                                bias=False)
-        print("####1 BNmode => ", BNmode)
+#         print("####1 BNmode => ", BNmode)
         if BNmode == 'BN':
             self.bn1 = nn.BatchNorm2d(kernels[0])
         elif BNmode == 'IN':
@@ -81,7 +81,7 @@ class ResYNetSync(nn.Module):
 
     def _make_layer(self, block, planes, blocks, stride=1, BNmode='IN'):
         downsample = None
-        print("####2 BNmode => ", BNmode)
+#         print("####2 BNmode => ", BNmode)
         if stride != 1 or self.inplanes != planes * block.expansion:
             bnl = nn.BatchNorm2d(planes * block.expansion)
             if BNmode == 'IN':
